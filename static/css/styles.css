@@ -1,0 +1,4922 @@
+/* Part 1 — Preparation (No CSS changes yet)
+We will modify your static/styles.css in many small parts.
+Each part will contain ONLY the specific section being changed.
+No merging, no combining, no mixing.
+This is the clean reset.
+
+When you say “next part”, I will apply Part 2 with the first real CSS modification.
+*/
+/* Part 2 — Fix Base Body Layout for Responsiveness
+This part improves mobile responsiveness WITHOUT changing your UI design.
+Only small safe improvements. */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-color);
+    transition: background-color 0.5s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Changed from center → prevents vertical squeeze on mobile */
+    min-height: 100vh;
+    padding: 1rem;
+}
+/* Part 3 — Responsive Improvement for .main-container
+No design changes. Only safe spacing fix for mobile devices. */
+@media (max-width: 768px) {
+    .main-container {
+        padding: 1.75rem; /* Slightly increased from 1.5 for better breathing room */
+        border-radius: 2rem; /* Reduced radius to prevent overflow */
+        width: 100%;
+    }
+}
+/* Part 4 — Typography & Spacing Fixes (Larger Combined Update) */
+
+/* Improve heading resizing */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    p, label {
+        font-size: 0.95rem;
+    }
+}
+
+/* Improve spacing between elements on small screens */
+@media (max-width: 768px) {
+    .result-card,
+    .upload-zone,
+    .modal-body,
+    .case-meta {
+        padding: 1rem;  /* reduced padding for better fit */
+    }
+
+    .preview-section {
+        margin: 0.75rem 0;
+    }
+}
+
+/* Prevent text overflow inside result cards */
+.result-card h4,
+.result-card p {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+/* Part 5 — Result Cards & Results Controls Responsiveness */
+
+/* Fix results container spacing on all screens */
+.results-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Prevent overflow on medium devices */
+@media (max-width: 1024px) {
+    .results-controls {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: left;
+    }
+
+    .control-group {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .results-summary {
+        width: 100%;
+        text-align: right;
+        padding-top: 0.5rem;
+    }
+}
+
+/* Fix result card layout for mobile */
+@media (max-width: 768px) {
+    .result-card {
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+    }
+
+    .rank-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .similarity-bar {
+        width: 100px;
+        height: 6px;
+    }
+
+    .similarity-fill {
+        border-radius: 3px;
+    }
+}
+
+/* Fix result card grid spacing on all devices */
+.result-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Text wrapping fix so long case names never overflow */
+.result-card h4 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.35;
+}
+
+/* Fix preview text clipping issues */
+.preview-text {
+    -webkit-line-clamp: 4; /* slightly increased for clarity */
+}
+
+/* Center 'No Results' message and prevent text overflow */
+.no-results {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    word-wrap: break-word;
+}
+
+/* Improve spacing between filter dropdowns and buttons */
+.control-select {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+/* Part 6 — Modal & Overlay Responsiveness Improvements */
+
+/* Make overlay always cover the screen */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 2000; /* increased to ensure top-most */
+}
+
+/* When modal is active */
+.modal-overlay.show {
+    display: flex;
+}
+
+/* Modal container improvements */
+.modal-content {
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh; /* prevent oversized modal */
+    overflow: hidden;
+    border-radius: 1.25rem;
+    background: var(--card-bg);
+}
+
+/* Header improvements */
+.modal-header {
+    padding: 1.5rem 1.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Close button tap-friendly */
+.modal-close {
+    font-size: 1.8rem;
+    padding: 0.4rem;
+    border-radius: 50%;
+}
+
+/* Body scroll fix */
+.modal-body {
+    padding: 1.25rem 1.75rem;
+    overflow-y: auto;
+    max-height: 60vh; /* keeps header + footer visible */
+    scroll-behavior: smooth;
+}
+
+/* Case metadata grid */
+.case-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-color);
+}
+
+/* Labels */
+.meta-label {
+    font-size: 0.85rem;
+}
+
+/* Values */
+.meta-value {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Case text fix */
+.case-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
+
+/* Footer actions */
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.75rem 1.5rem;
+}
+
+/***********************************
+    Mobile Responsive Adjustments
+***********************************/
+@media (max-width: 768px) {
+
+    /* Modal padding adjustment */
+    .modal-content {
+        max-height: 92vh;
+        border-radius: 1rem;
+    }
+
+    .modal-header {
+        padding: 1.25rem 1.5rem 0.75rem;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    /* Body content */
+    .modal-body {
+        padding: 1rem 1.25rem;
+        max-height: 65vh;
+    }
+
+    .case-meta {
+        grid-template-columns: 1fr 1fr; 
+        padding: 0.75rem;
+    }
+
+    .modal-actions {
+        padding: 0.75rem 1.25rem 1.25rem;
+    }
+}
+
+/***********************************
+    Extra Small Screens (Phones < 400px)
+***********************************/
+@media (max-width: 400px) {
+
+    .modal-content {
+        max-height: 94vh;
+        border-radius: 0.85rem;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.15rem;
+    }
+
+    .modal-body {
+        padding: 0.75rem 1rem;
+    }
+
+    .case-meta {
+        grid-template-columns: 1fr; /* stack meta items */
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .modal-btn {
+        width: 100%; /* full width for tap convenience */
+    }
+}
+/* Part 6 — Modal & Overlay Responsiveness Improvements */
+
+/* Make overlay always cover the screen */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 2000; /* increased to ensure top-most */
+}
+
+/* When modal is active */
+.modal-overlay.show {
+    display: flex;
+}
+
+/* Modal container improvements */
+.modal-content {
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh; /* prevent oversized modal */
+    overflow: hidden;
+    border-radius: 1.25rem;
+    background: var(--card-bg);
+}
+
+/* Header improvements */
+.modal-header {
+    padding: 1.5rem 1.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Close button tap-friendly */
+.modal-close {
+    font-size: 1.8rem;
+    padding: 0.4rem;
+    border-radius: 50%;
+}
+
+/* Body scroll fix */
+.modal-body {
+    padding: 1.25rem 1.75rem;
+    overflow-y: auto;
+    max-height: 60vh; /* keeps header + footer visible */
+    scroll-behavior: smooth;
+}
+
+/* Case metadata grid */
+.case-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-color);
+}
+
+/* Labels */
+.meta-label {
+    font-size: 0.85rem;
+}
+
+/* Values */
+.meta-value {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Case text fix */
+.case-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
+
+/* Footer actions */
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.75rem 1.5rem;
+}
+
+/***********************************
+    Mobile Responsive Adjustments
+***********************************/
+@media (max-width: 768px) {
+
+    /* Modal padding adjustment */
+    .modal-content {
+        max-height: 92vh;
+        border-radius: 1rem;
+    }
+
+    .modal-header {
+        padding: 1.25rem 1.5rem 0.75rem;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    /* Body content */
+    .modal-body {
+        padding: 1rem 1.25rem;
+        max-height: 65vh;
+    }
+
+    .case-meta {
+        grid-template-columns: 1fr 1fr; 
+        padding: 0.75rem;
+    }
+
+    .modal-actions {
+        padding: 0.75rem 1.25rem 1.25rem;
+    }
+}
+
+/***********************************
+    Extra Small Screens (Phones < 400px)
+***********************************/
+@media (max-width: 400px) {
+
+    .modal-content {
+        max-height: 94vh;
+        border-radius: 0.85rem;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.15rem;
+    }
+
+    .modal-body {
+        padding: 0.75rem 1rem;
+    }
+
+    .case-meta {
+        grid-template-columns: 1fr; /* stack meta items */
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .modal-btn {
+        width: 100%; /* full width for tap convenience */
+    }
+}
+/* Part 8 — Loading Overlay & Skeleton Responsive Upgrades */
+
+/***********************************
+    Loading Overlay Fixes
+***********************************/
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000; /* Ensure it is always above all elements */
+    padding: 0 1.25rem; /* Prevent squishing on very small screens */
+}
+
+body.dark-mode .loading-overlay {
+    background: rgba(44, 62, 80, 0.9);
+}
+
+/***********************************
+    Skeleton Loader — Core Fixes
+***********************************/
+.skeleton-card {
+    padding: 1.25rem;
+    border-radius: 0.9rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.25rem;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.skeleton-line {
+    height: 0.9rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.65rem;
+}
+
+.skeleton-line.short {
+    width: 55%;
+}
+
+.skeleton-line.medium {
+    width: 75%;
+}
+
+.skeleton-line.long {
+    width: 100%;
+}
+
+/* Similarity bar skeleton */
+.skeleton-bar {
+    height: 7px;
+    width: 110px;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+/* Smooth animation */
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--border-color) 25%,
+        rgba(255,255,255,0.5) 50%,
+        var(--border-color) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+/***********************************
+    Responsive Fixes — Tablets
+***********************************/
+@media (max-width: 1024px) {
+    .skeleton-card {
+        padding: 1.15rem;
+    }
+
+    .skeleton-line {
+        height: 0.85rem;
+    }
+
+    .skeleton-bar {
+        width: 95px;
+    }
+}
+
+/***********************************
+    Responsive Fixes — Mobile
+***********************************/
+@media (max-width: 768px) {
+    .loading-overlay {
+        padding: 0 1rem;
+    }
+
+    .skeleton-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .skeleton-line {
+        height: 0.8rem;
+    }
+
+    .skeleton-line.short {
+        width: 50%;
+    }
+
+    .skeleton-line.medium {
+        width: 70%;
+    }
+
+    .skeleton-bar {
+        width: 85px;
+        height: 6px;
+    }
+}
+
+/***********************************
+    Extra Small Phones (< 400px)
+***********************************/
+@media (max-width: 400px) {
+
+    .loading-overlay {
+        padding: 0 0.75rem;
+    }
+
+    .skeleton-card {
+        padding: 0.85rem;
+    }
+
+    .skeleton-line {
+        height: 0.7rem;
+    }
+
+    .skeleton-line.short {
+        width: 45%;
+    }
+
+    .skeleton-line.medium {
+        width: 65%;
+    }
+
+    .skeleton-bar {
+        width: 75px;
+        height: 5px;
+    }
+}
+/* Part 9 — Buttons, Actions, Interaction, Mobile Active States */
+
+/***********************************
+    Global Button Enhancements
+***********************************/
+.action-btn,
+.modal-btn,
+.submit-button {
+    transition: 
+        background-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.15s ease;
+}
+
+/* Active / Press effect */
+.action-btn:active,
+.modal-btn:active,
+.submit-button:active {
+    transform: scale(0.97);
+}
+
+/* Disabled button (UI consistency) */
+button[disabled],
+button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/***********************************
+    Action Buttons (Inside Case Cards)
+***********************************/
+.action-btn {
+    padding: 0.55rem 1.15rem;
+    border-radius: 0.55rem;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background: var(--primary-accent);
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.35);
+}
+
+.action-btn:active {
+    background: var(--secondary-accent);
+    color: white;
+}
+
+/***********************************
+    Modal Buttons
+***********************************/
+.modal-btn {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.65rem;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.92rem;
+}
+
+.modal-btn.primary {
+    background: var(--primary-accent);
+    border-color: var(--primary-accent);
+    color: white;
+}
+
+.modal-btn.primary:hover {
+    background: var(--secondary-accent);
+}
+
+.modal-btn.primary:active {
+    background: var(--secondary-accent);
+    transform: scale(0.96);
+}
+
+.modal-btn:hover {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.modal-btn:active {
+    transform: scale(0.97);
+}
+
+/***********************************
+    Submit Button (Analyze Button)
+***********************************/
+.submit-button {
+    padding: 1.15rem 2.2rem;
+    border-radius: 1.3rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.7px;
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(52, 152, 219, 0.35);
+}
+
+.submit-button:active {
+    transform: scale(0.97);
+}
+
+/***********************************
+    Touch-Friendly Enhancements (Mobile)
+***********************************/
+@media (hover: none) {
+    /* Remove hover color jump on mobile */
+    .action-btn:hover,
+    .modal-btn:hover,
+    .submit-button:hover {
+        box-shadow: none;
+        transform: none;
+    }
+
+    .action-btn:active,
+    .modal-btn:active,
+    .submit-button:active {
+        transform: scale(0.97);
+    }
+}
+
+/***********************************
+    Responsive Adjustments
+***********************************/
+@media (max-width: 768px) {
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-btn,
+    .modal-btn.primary {
+        width: 100%;
+        text-align: center;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/***********************************
+    Extra Small Devices (< 420px)
+***********************************/
+@media (max-width: 420px) {
+
+    .action-btn {
+        padding: 0.45rem 0.9rem;
+        font-size: 0.82rem;
+    }
+
+    .modal-btn {
+        padding: 0.65rem 1.1rem;
+        font-size: 0.88rem;
+    }
+
+    .submit-button {
+        padding: 0.9rem;
+        font-size: 0.95rem;
+    }
+}
+/* Part 10 — Result Cards, Shadows, Hover, Ranking, Layout Improvements */
+
+/*******************************************
+    Card Base: Cleaner, Sharper, Modern
+********************************************/
+.result-card {
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255,255,255,0.96) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 1.15rem;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, 
+                box-shadow 0.3s ease,
+                border-color 0.25s ease;
+}
+
+/* Vertical spacing between cards */
+.result-section .result-card + .result-card {
+    margin-top: 1.25rem;
+}
+
+/*******************************************
+    Fancy Top Glow Accent on Hover
+********************************************/
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+}
+
+.result-card:hover::before {
+    transform: scaleX(1);
+}
+
+/*******************************************
+    Hover Elevation — Smooth & Premium
+********************************************/
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    border-color: var(--primary-accent);
+}
+
+/*******************************************
+    Result Card — Title Fix
+********************************************/
+.result-card h4,
+.case-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.case-title:hover {
+    color: var(--primary-accent);
+}
+
+/*******************************************
+    Similarity Bar Alignment Fix
+********************************************/
+.similarity-bar {
+    width: 140px;
+    height: 8px;
+    border-radius: 5px;
+    background: rgba(52,152,219,0.18);
+    overflow: hidden;
+    margin-top: 0.3rem;
+}
+
+.similarity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    width: 0%;
+    transition: width 0.8s ease;
+    border-radius: 5px;
+}
+
+/*******************************************
+    Rank Badge — Stronger & Cleaner
+********************************************/
+.rank-badge {
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(52,152,219,0.4);
+    margin-left: auto;
+}
+
+/*******************************************
+    Card Header Layout
+********************************************/
+.result-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/*******************************************
+    Preview Section — Readable and Smooth
+********************************************/
+.preview-text {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-color);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;   /* Increased for readability */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.preview-fade {
+    height: 30px;
+    background: linear-gradient(transparent, var(--card-bg));
+    margin-top: -25px;
+    pointer-events: none;
+}
+
+/*******************************************
+    Action Buttons Layout Inside Cards
+********************************************/
+.result-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/*******************************************
+    No Results Box — Cleaner & Responsive
+********************************************/
+.no-results {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-color);
+    opacity: 0.75;
+    font-size: 1rem;
+    word-wrap: break-word;
+}
+
+.no-results-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.75;
+}
+
+/*******************************************
+    Responsive Fixes for Result Cards
+********************************************/
+
+@media (max-width: 900px) {
+    .result-card {
+        padding: 1.25rem;
+        border-radius: 1rem;
+    }
+    .rank-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+    .similarity-bar {
+        width: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .result-card {
+        padding: 1.1rem;
+    }
+    .preview-text {
+        -webkit-line-clamp: 5; 
+    }
+    .result-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .result-card h4 {
+        font-size: 1rem;
+    }
+    .preview-text {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 6;
+    }
+    .rank-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+    .similarity-bar {
+        width: 100px;
+    }
+}
+/* Part 11 — Modal Redesign, Responsiveness, Dark Mode Fixes */
+
+/*******************************************
+    Modal Overlay — Center Fix + Blur
+********************************************/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    /* Dark blur background */
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1rem;
+    z-index: 2000;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+/*******************************************
+    Modal Container
+********************************************/
+.modal-content {
+    width: 100%;
+    max-width: 800px;
+    max-height: 88vh;
+
+    background: var(--card-bg);
+    border-radius: 1.75rem;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.35);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    animation: modalSlideIn 0.35s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/*******************************************
+    Modal Header
+********************************************/
+.modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.3;
+    word-wrap: break-word;
+}
+
+/*******************************************
+    Close Button
+********************************************/
+.modal-close {
+    font-size: 1.9rem;
+    opacity: 0.75;
+    border-radius: 50%;
+    padding: 0.45rem;
+    cursor: pointer;
+    transition: opacity 0.25s ease, background 0.25s ease;
+}
+
+.modal-close:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.08);
+}
+
+.modal-close:active {
+    transform: scale(0.9);
+}
+
+/*******************************************
+    Modal Body — Scrolling Area
+********************************************/
+.modal-body {
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+    flex: 1;
+    scroll-behavior: smooth;
+}
+
+.case-content {
+    line-height: 1.75;
+    font-size: 1.05rem;
+    color: var(--text-color);
+}
+
+.case-content p {
+    margin-bottom: 1rem;
+}
+
+/*******************************************
+    Case Metadata Grid (Score, Rank)
+********************************************/
+.case-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.25rem;
+
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+
+    border-radius: 0.75rem;
+    background: var(--bg-color);
+}
+
+.meta-item {
+    text-align: center;
+}
+
+.meta-label {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.meta-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/*******************************************
+    Modal Footer
+********************************************/
+.modal-actions {
+    padding: 1rem 2rem 1.75rem;
+    border-top: 1px solid var(--border-color);
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/*******************************************
+    Copy Button Highlight
+********************************************/
+.modal-btn.primary {
+    background: var(--primary-accent);
+    color: white;
+    border-color: var(--primary-accent);
+}
+
+.modal-btn.primary:hover {
+    background: var(--secondary-accent);
+}
+
+/*******************************************
+    Responsiveness
+********************************************/
+
+/* Tablet */
+@media (max-width: 900px) {
+    .modal-title {
+        font-size: 1.45rem;
+    }
+    .modal-content {
+        max-width: 90%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .modal-header,
+    .modal-body,
+    .modal-actions {
+        padding: 1.25rem;
+    }
+
+    .modal-title {
+        font-size: 1.35rem;
+    }
+
+    .case-content {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-btn,
+    .modal-btn.primary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .modal-title {
+        font-size: 1.2rem;
+    }
+    .case-content {
+        font-size: 0.92rem;
+    }
+}
+
+/* Extra Small (phones like iPhone SE) */
+@media (max-width: 360px) {
+    .modal-title {
+        font-size: 1.1rem;
+    }
+    .modal-content {
+        border-radius: 1.25rem;
+    }
+}
+/* Part 12 — Form Inputs, Textarea, File Upload, Word Counter Responsive Fixes */
+
+/*******************************************
+    Form Layout
+********************************************/
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/*******************************************
+    Textarea — Clean, Responsive, Better Readability
+********************************************/
+textarea {
+    width: 100%;
+    min-height: 140px;
+    resize: vertical;
+
+    padding: 1rem;
+    border-radius: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+textarea:focus {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 6px rgba(52, 152, 219, 0.25);
+    outline: none;
+}
+
+/*******************************************
+    Word Counter (Under Textarea)
+********************************************/
+.word-counter-box {
+    margin-top: -0.75rem;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-color);
+}
+
+#word-count {
+    font-weight: 700;
+}
+
+#word-count-message {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+/*******************************************
+    File Upload Area (Drag & Drop + Click)
+********************************************/
+.upload-zone {
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 1.25rem;
+
+    border: 2px dashed var(--border-color);
+    background: var(--bg-color);
+
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-zone:hover {
+    border-color: var(--primary-accent);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.upload-zone.dragover {
+    border-color: var(--primary-accent);
+    background: rgba(52, 152, 219, 0.12);
+    transform: scale(1.015);
+}
+
+.upload-icon {
+    font-size: 2.75rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+    color: var(--text-color);
+}
+
+.upload-text {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.upload-subtext {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/*******************************************
+    File Preview (After User Uploads PDF)
+********************************************/
+.file-preview {
+    display: flex;
+    align-items: center;
+    background: rgba(52,152,219,0.12);
+
+    padding: 1rem;
+    border-radius: 1rem;
+
+    animation: fadeIn 0.3s ease;
+    gap: 1rem;
+}
+
+.file-icon {
+    font-size: 2rem;
+    color: var(--primary-accent);
+    flex-shrink: 0;
+}
+
+.file-info h4 {
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.file-info p {
+    font-size: 0.85rem;
+    opacity: 0.75;
+    margin: 0;
+}
+
+.remove-file {
+    margin-left: auto;
+    padding: 0.35rem;
+    border-radius: 50%;
+    background: rgba(231,76,60,0.1);
+    color: #e74c3c;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.remove-file:hover {
+    background: rgba(231,76,60,0.2);
+    transform: scale(1.12);
+}
+
+/*******************************************
+    Label Styling
+********************************************/
+label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1.05rem;
+}
+
+/*******************************************
+    Responsive Fixes
+********************************************/
+
+/* Tablet: Reduce padding and adjust spacing */
+@media (max-width: 900px) {
+    textarea {
+        min-height: 130px;
+        font-size: 1rem;
+    }
+
+    .upload-zone {
+        padding: 1.75rem;
+    }
+
+    .file-preview {
+        padding: 0.9rem;
+    }
+}
+
+/* Mobile: Major adjustments */
+@media (max-width: 768px) {
+    textarea {
+        min-height: 120px;
+        padding: 0.9rem;
+    }
+
+    .upload-zone {
+        padding: 1.5rem;
+    }
+
+    .upload-icon {
+        font-size: 2.4rem;
+    }
+
+    .upload-text {
+        font-size: 1.05rem;
+    }
+
+    .word-counter-box {
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Small Mobile (≤ 480px) */
+@media (max-width: 480px) {
+    textarea {
+        font-size: 0.95rem;
+        min-height: 110px;
+    }
+
+    .upload-zone {
+        padding: 1.25rem;
+    }
+
+    .upload-text {
+        font-size: 1rem;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+    }
+
+    .file-info h4 {
+        font-size: 0.9rem;
+    }
+
+    .file-info p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Very Small Devices (≤ 360px) */
+@media (max-width: 360px) {
+    textarea {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        min-height: 100px;
+    }
+
+    .upload-zone {
+        padding: 1rem;
+    }
+
+    .upload-icon {
+        font-size: 1.8rem;
+    }
+}
+/* PART 13 — Loading System Improvements */
+
+/*******************************************
+    Global Loading Overlay
+********************************************/
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 3000;
+
+    transition: opacity 0.25s ease;
+}
+
+body.dark-mode #loading-overlay {
+    background: rgba(44, 62, 80, 0.92);
+}
+
+/*******************************************
+    Overlay Visible State
+********************************************/
+#loading-overlay.flex {
+    display: flex;
+}
+
+/*******************************************
+    Hand Animation (custom loader)
+********************************************/
+#hand-loading {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.3s ease, transform 0.35s ease;
+}
+
+#hand-loading.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/*******************************************
+    Skeleton Wrapper
+********************************************/
+#loading-skeletons {
+    display: none;
+    margin-top: 2rem;
+}
+
+/*******************************************
+    Skeleton Card
+********************************************/
+.skeleton-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+
+    animation: fadeIn 0.4s ease;
+}
+
+/*******************************************
+    Skeleton Animation (Shimmer)
+********************************************/
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--border-color) 25%,
+        rgba(255,255,255,0.6) 50%,
+        var(--border-color) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-move 1.5s infinite;
+}
+
+@keyframes skeleton-move {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/*******************************************
+    Skeleton Lines
+********************************************/
+.skeleton-line {
+    height: 0.95rem;
+    border-radius: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+.skeleton-line.short {
+    width: 55%;
+}
+
+.skeleton-line.medium {
+    width: 75%;
+}
+
+.skeleton-line.long {
+    width: 100%;
+}
+
+/*******************************************
+    Skeleton Bar for Similarity
+********************************************/
+.skeleton-bar {
+    height: 8px;
+    width: 120px;
+    border-radius: 4px;
+    margin-top: 0.6rem;
+}
+
+/*******************************************
+    Analyze Button — Loading State
+********************************************/
+.submit-button {
+    transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.submit-button.loading {
+    opacity: 0.85;
+    cursor: wait;
+    pointer-events: none;
+    transform: scale(0.98);
+}
+
+.submit-button.loading svg {
+    display: inline-block;
+}
+
+/*******************************************
+    Responsive Fixes
+********************************************/
+
+/* Tablet */
+@media (max-width: 900px) {
+    #loading-skeletons {
+        margin-top: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .skeleton-card {
+        padding: 1.25rem;
+    }
+    .skeleton-line {
+        height: 0.9rem;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .skeleton-card {
+        padding: 1.1rem;
+    }
+    .skeleton-line {
+        height: 0.85rem;
+    }
+}
+
+/* Extra Small */
+@media (max-width: 360px) {
+    .skeleton-card {
+        border-radius: 0.8rem;
+    }
+}
+/* PART 14 — Result Card Responsiveness, Similarity Bars, Rank Badge, Preview Fixes */
+
+/*******************************************
+    Result Card — Main Container
+********************************************/
+.result-card {
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255,255,255,0.95) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 1.25rem;
+
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px var(--shadow-color);
+    border-color: var(--primary-accent);
+}
+
+/*******************************************
+    Card Top Bar (Title + Rank)
+********************************************/
+.result-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+/*******************************************
+    Case Title
+********************************************/
+.case-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.4;
+
+    cursor: pointer;
+    transition: color 0.25s ease;
+}
+
+.case-title:hover {
+    color: var(--primary-accent);
+}
+
+/*******************************************
+    Rank Badge
+********************************************/
+.rank-badge {
+    width: 36px;
+    height: 36px;
+
+    font-size: 1rem;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    color: white;
+    font-weight: 700;
+
+    box-shadow: 0 5px 12px rgba(52,152,219,0.3);
+}
+
+/*******************************************
+    Similarity Section
+********************************************/
+.similarity-box {
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.similarity-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.similarity-bar {
+    flex-shrink: 0;
+    width: 130px;
+    height: 9px;
+    border-radius: 4px;
+    background: rgba(52,152,219,0.18);
+    overflow: hidden;
+}
+
+.similarity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    width: 0%;
+    transition: width 0.9s ease;
+    border-radius: 4px;
+}
+
+/*******************************************
+    Preview Text
+********************************************/
+.preview-section {
+    margin-top: 1rem;
+    position: relative;
+}
+
+.preview-text {
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--text-color);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;           /* Show 3 lines only */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/*******************************************
+    Fade Effect at Bottom
+********************************************/
+.preview-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 45px;
+    background: linear-gradient(to bottom, transparent, var(--card-bg));
+    pointer-events: none;
+}
+
+/*******************************************
+    Action Buttons (Copy, View Details)
+********************************************/
+.result-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.result-actions .action-btn {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border-radius: 0.6rem;
+
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+
+    font-size: 0.9rem;
+    cursor: pointer;
+
+    transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.result-actions .action-btn:hover {
+    background: var(--primary-accent);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/*******************************************
+    RESPONSIVENESS
+********************************************/
+
+/* Tablet */
+@media (max-width: 900px) {
+    .case-title {
+        font-size: 1.15rem;
+    }
+    .rank-badge {
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .result-card {
+        padding: 1.3rem;
+        border-radius: 1rem;
+    }
+
+    .case-title {
+        font-size: 1.1rem;
+    }
+
+    .similarity-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+
+    .similarity-bar {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .preview-text {
+        -webkit-line-clamp: 4;
+        font-size: 0.95rem;
+    }
+
+    .result-actions {
+        flex-direction: column;
+    }
+
+    .result-actions .action-btn {
+        width: 100%;
+    }
+}
+
+/* Small Mobile (≤ 480px) */
+@media (max-width: 480px) {
+    .case-title {
+        font-size: 1rem;
+    }
+
+    .rank-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .preview-text {
+        font-size: 0.92rem;
+        -webkit-line-clamp: 5;
+    }
+}
+
+/* Extra Small (≤ 360px) */
+@media (max-width: 360px) {
+    .case-title {
+        font-size: 0.95rem;
+    }
+    .result-card {
+        padding: 1rem;
+    }
+}
+/* PART 15 — Filter & Sort Controls, Counters, No-results, Responsive Dropdowns */
+
+/* Controls container */
+.results-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+/* Control groups */
+.control-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Labels */
+.control-label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+/* Select / Dropdown styling */
+.control-select, .control-select:focus {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0.55rem 0.9rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%234a5568"><path d="M4 6l4 4 4-4z"/></svg>') no-repeat right 10px center;
+    background-size: 12px;
+    min-width: 160px;
+    font-size: 0.92rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Focus + hover */
+.control-select:hover {
+    border-color: var(--primary-accent);
+}
+.control-select:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 6px rgba(52,152,219,0.06);
+}
+
+/* Counts / summary */
+.results-summary {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+}
+.results-summary .count-badge {
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* No results */
+.no-results {
+    display: none;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    background: var(--bg-color);
+    border: 1px dashed var(--border-color);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Ensure visible when active */
+.no-results.show {
+    display: block;
+}
+
+/* No results icon/text */
+.no-results .no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Compact controls for small widths */
+@media (max-width: 900px) {
+    .control-select {
+        min-width: 140px;
+    }
+}
+
+/* Stack controls on narrow screens */
+@media (max-width: 640px) {
+    .results-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .control-group {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .control-select {
+        width: 100%;
+        min-width: 0;
+        padding-right: 2.5rem; /* space for dropdown arrow */
+    }
+
+    .results-summary {
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 420px) {
+    .control-label {
+        font-size: 0.88rem;
+    }
+    .results-summary {
+        font-size: 0.88rem;
+    }
+}
+
+/* Accessibility: focus-visible outline */
+.control-select:focus-visible {
+    outline: 3px solid rgba(52,152,219,0.12);
+    outline-offset: 2px;
+}
+/* PART 16 — Chatbot Panel & Conversations Responsiveness */
+
+/*******************************************
+    Chatbot Container
+********************************************/
+.chatbot-container {
+    background: var(--card-bg);
+    border-radius: 1.5rem;
+    border: 1px solid var(--border-color);
+
+    padding: 1.25rem;
+    width: 100%;
+    max-width: 900px;
+
+    box-shadow: 0 10px 25px var(--shadow-color);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 1.25rem;
+    overflow: hidden;
+}
+
+/*******************************************
+    Chat Header
+********************************************/
+.chatbot-header {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-color);
+    text-align: center;
+}
+
+/*******************************************
+    Chat Messages Area
+********************************************/
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0.25rem;
+    scroll-behavior: smooth;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 8px;
+}
+
+/*******************************************
+    Chat Bubble — User / Bot
+********************************************/
+.chat-bubble {
+    padding: 0.9rem 1.2rem;
+    border-radius: 1rem;
+    max-width: 85%;
+    line-height: 1.6;
+    font-size: 0.98rem;
+
+    word-break: break-word;
+    animation: fadeIn 0.35s ease;
+}
+
+/* User bubble */
+.chat-bubble.user {
+    background: var(--primary-accent);
+    color: #ffffff;
+    align-self: flex-end;
+    border-bottom-right-radius: 0.4rem;
+}
+
+/* Bot bubble */
+.chat-bubble.bot {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    align-self: flex-start;
+    border-bottom-left-radius: 0.4rem;
+}
+
+/*******************************************
+    Chat Input Bar
+********************************************/
+.chat-input-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+
+    background: var(--bg-color);
+}
+
+/*******************************************
+    Chat Input Field
+********************************************/
+.chat-input-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    color: var(--text-color);
+    outline: none;
+}
+
+.chat-input-bar input::placeholder {
+    color: rgba(0,0,0,0.45);
+}
+
+body.dark-mode .chat-input-bar input::placeholder {
+    color: rgba(255,255,255,0.45);
+}
+
+/*******************************************
+    Send Button
+********************************************/
+.chat-send-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.7rem;
+    border: none;
+
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    color: white;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.chat-send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52,152,219,0.35);
+}
+
+.chat-send-btn:active {
+    transform: scale(0.96);
+}
+
+/*******************************************
+    Mobile & Tablet Responsive Fixes
+********************************************/
+
+/* Tablet */
+@media (max-width: 900px) {
+    .chatbot-container {
+        border-radius: 1.2rem;
+        padding: 1rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    .chatbot-header {
+        font-size: 1.35rem;
+    }
+
+    .chat-bubble {
+        max-width: 90%;
+        font-size: 0.95rem;
+    }
+
+    .chat-input-bar {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .chat-send-btn {
+        padding: 0.45rem 0.85rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+
+    .chat-bubble {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .chat-input-bar input {
+        font-size: 0.9rem;
+    }
+
+    .chat-send-btn {
+        padding: 0.35rem 0.8rem;
+    }
+}
+
+/* Extra small mobile */
+@media (max-width: 360px) {
+    .chat-send-btn {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.85rem;
+    }
+}
+/* PART 17 — Sidebar / Drawer Responsive Improvements */
+
+/*******************************************
+    Sidebar Base
+********************************************/
+.sidebar {
+    width: 260px;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem 1rem;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    z-index: 2500;
+    transform: translateX(0);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+
+    transition: transform 0.35s ease, box-shadow 0.25s ease;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .sidebar {
+    box-shadow: 2px 0 12px rgba(255,255,255,0.05);
+}
+
+/*******************************************
+    Sidebar Hidden (for mobile)
+********************************************/
+.sidebar.closed {
+    transform: translateX(-100%);
+    box-shadow: none;
+}
+
+/*******************************************
+    Sidebar List Items
+********************************************/
+.sidebar-item {
+    padding: 0.85rem 1rem;
+    border-radius: 0.75rem;
+
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    cursor: pointer;
+
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-color);
+
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.sidebar-item:hover {
+    background: rgba(52,152,219,0.15);
+    color: var(--primary-accent);
+}
+
+/*******************************************
+    Sidebar Responsive Toggle Button
+********************************************/
+.sidebar-toggle {
+    position: fixed;
+    top: 1.2rem;
+    left: 1.2rem;
+
+    width: 46px;
+    height: 46px;
+
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1.7rem;
+    cursor: pointer;
+
+    z-index: 3000;
+
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.sidebar-toggle:hover {
+    transform: scale(1.05);
+    background: rgba(52,152,219,0.1);
+}
+
+.sidebar-toggle:active {
+    transform: scale(0.95);
+}
+
+/*******************************************
+    Main Content Area Adjustment
+********************************************/
+.main-content {
+    margin-left: 260px;
+    padding: 1.5rem;
+    width: calc(100% - 260px);
+    transition: margin-left 0.35s ease;
+}
+
+/*******************************************
+    When Sidebar is Closed
+********************************************/
+body.sidebar-closed .main-content {
+    margin-left: 0;
+    width: 100%;
+}
+
+/*******************************************
+    OVERLAY for Mobile (when menu is open)
+********************************************/
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+
+    z-index: 2400;
+}
+
+.mobile-overlay.show {
+    display: block;
+}
+
+/*******************************************
+    RESPONSIVE BEHAVIOR
+********************************************/
+
+/* Tablet: Sidebar collapses into drawer */
+@media (max-width: 900px) {
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        width: 250px;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 3px 0 20px rgba(0,0,0,0.15);
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-toggle {
+        display: flex;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+        padding: 1.25rem 0.75rem;
+    }
+
+    .sidebar-item {
+        padding: 0.75rem 0.9rem;
+        font-size: 0.92rem;
+    }
+
+    .sidebar-toggle {
+        width: 44px;
+        height: 44px;
+        font-size: 1.6rem;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .sidebar-item {
+        font-size: 0.88rem;
+        padding: 0.65rem 0.8rem;
+    }
+}
+
+/* Extra small */
+@media (max-width: 360px) {
+    .sidebar {
+        width: 180px;
+    }
+}
+/* PART 18 — Form, Input & Textarea Responsive Fixes */
+
+/*******************************************
+    Textarea improvements
+********************************************/
+textarea {
+    width: 100%;
+    min-height: 160px;
+    resize: vertical;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* On mobile — prevent overflow */
+@media (max-width: 768px) {
+    textarea {
+        min-height: 120px;
+        font-size: 0.95rem;
+        padding: 0.9rem;
+    }
+}
+
+/*******************************************
+    Word-count wrapper
+********************************************/
+.word-counter-wrapper {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.85;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#word-count-message {
+    font-size: 0.85rem;
+    margin-left: 6px;
+}
+
+/* Mobile — stack the word counter */
+@media (max-width: 600px) {
+    .word-counter-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
+
+/*******************************************
+    File upload zone spacing fix
+********************************************/
+.upload-zone {
+    margin-top: 1rem;
+}
+
+/* Mobile — compact spacing */
+@media (max-width: 768px) {
+    .upload-zone {
+        padding: 1.3rem;
+        margin-top: 0.8rem;
+    }
+}
+
+/*******************************************
+    Selected file preview
+********************************************/
+#file-preview {
+    margin-top: 1rem;
+    gap: 0.8rem;
+}
+
+#file-preview h4,
+#file-preview p {
+    overflow-wrap: break-word;
+}
+
+/*******************************************
+    Submit button alignment fix
+********************************************/
+.submit-button {
+    margin-top: 1.7rem;
+    width: 100%;
+    text-align: center;
+}
+
+/* Mobile — flatter button */
+@media (max-width: 768px) {
+    .submit-button {
+        padding: 1rem;
+        border-radius: 1rem;
+        font-size: 1rem;
+        margin-top: 1.4rem;
+    }
+}
+
+/*******************************************
+    Form spacing and structure
+********************************************/
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Mobile — tighter spacing */
+@media (max-width: 768px) {
+    form {
+        gap: 1rem;
+    }
+}
+/* PART 19 — Results Cards & Elements Responsive Fix */
+
+/*******************************************
+    RESULT CARD LAYOUT FIXES
+********************************************/
+.result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    width: 100%;
+}
+
+/* Mobile — compact and tighter */
+@media (max-width: 768px) {
+    .result-card {
+        padding: 1.1rem;
+        gap: 0.75rem;
+    }
+}
+
+/*******************************************
+    TITLE + RANK SECTION
+********************************************/
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.result-header h4 {
+    flex: 1;
+    font-size: 1.1rem;
+    font-weight: 700;
+    overflow-wrap: break-word;
+}
+
+/* Prevent title overflow on mobile */
+@media (max-width: 768px) {
+    .result-header h4 {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+}
+
+/*******************************************
+    RANK BADGE FIX (Responsive)
+********************************************/
+.rank-badge {
+    min-width: 28px;
+    min-height: 28px;
+    font-size: 0.8rem;
+}
+
+/* Mobile — smaller rank badge */
+@media (max-width: 768px) {
+    .rank-badge {
+        min-width: 24px;
+        min-height: 24px;
+        font-size: 0.75rem;
+    }
+}
+
+/*******************************************
+    SIMILARITY BAR RESPONSIVE FIX
+********************************************/
+.similarity-bar {
+    width: 100%;
+    max-width: 140px;
+}
+
+@media (max-width: 768px) {
+    .similarity-bar {
+        max-width: 100px;
+    }
+}
+
+/*******************************************
+    PREVIEW TEXT FIX
+********************************************/
+.preview-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.55;
+    font-size: 0.95rem;
+}
+
+/* Mobile — reduce font & make more compact */
+@media (max-width: 768px) {
+    .preview-text {
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+}
+
+/*******************************************
+    PREVIEW SECTION SPACING
+********************************************/
+.preview-section {
+    margin: 0.8rem 0;
+}
+
+/* Mobile spacing */
+@media (max-width: 768px) {
+    .preview-section {
+        margin: 0.5rem 0;
+    }
+}
+
+/*******************************************
+    BUTTON GROUP FIX
+********************************************/
+.result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.action-btn {
+    flex-shrink: 0;
+}
+
+/* Mobile – full width buttons */
+@media (max-width: 768px) {
+    .action-btn {
+        width: 100%;
+        text-align: center;
+        font-size: 0.92rem;
+        padding: 0.6rem 1rem;
+    }
+}
+/* PART 20 — Case Details Modal Responsive Improvements */
+
+/*******************************************
+    MODAL CONTAINER
+********************************************/
+.modal-overlay {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+/*******************************************
+    MODAL BOX
+********************************************/
+.modal-content {
+    width: 100%;
+    max-width: 780px;
+    max-height: 90vh;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    padding: 0;
+}
+
+/*******************************************
+    MODAL HEADER
+********************************************/
+.modal-header {
+    padding: 1.6rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Title overflow fix */
+.modal-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    overflow-wrap: break-word;
+    line-height: 1.3;
+}
+
+/* Mobile: reduce font, prevent overflow */
+@media (max-width: 768px) {
+    .modal-title {
+        font-size: 1.15rem;
+    }
+
+    .modal-header {
+        padding: 1.2rem 1.3rem;
+    }
+}
+
+/*******************************************
+    CLOSE BUTTON
+********************************************/
+.modal-close {
+    font-size: 1.9rem;
+    padding: 0.4rem;
+    border-radius: 50%;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .modal-close {
+        font-size: 1.7rem;
+    }
+}
+
+/*******************************************
+    MODAL BODY
+********************************************/
+.modal-body {
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+/* Mobile body fix */
+@media (max-width: 768px) {
+    .modal-body {
+        padding: 1.1rem 1.3rem;
+        max-height: 65vh;
+    }
+}
+
+/*******************************************
+    META INFO GRID
+********************************************/
+.case-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 0.6rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .case-meta {
+        grid-template-columns: 1fr 1fr;
+        padding: 0.8rem;
+    }
+
+    .meta-value {
+        font-size: 1rem;
+    }
+}
+
+/*******************************************
+    CASE CONTENT FIX
+********************************************/
+.case-content {
+    line-height: 1.7;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* Mobile readability */
+@media (max-width: 768px) {
+    .case-content {
+        font-size: 0.92rem;
+        line-height: 1.55;
+    }
+}
+
+/*******************************************
+    MODAL ACTION BUTTONS
+********************************************/
+.modal-actions {
+    padding: 1.2rem 2rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+}
+
+/* Mobile — buttons full width */
+@media (max-width: 768px) {
+    .modal-actions {
+        padding: 1rem 1.3rem;
+        flex-direction: column;
+    }
+
+    .modal-btn {
+        width: 100%;
+        padding: 0.8rem 1rem;
+    }
+}
+/* PART 21 — Chatbot Panel Responsive Improvements */
+
+/*******************************************
+    CHATBOT PANEL WRAPPER
+********************************************/
+#chatbot-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 350px;
+    height: 100vh;
+
+    background: var(--card-bg);
+    border-left: 1px solid var(--border-color);
+
+    display: flex;
+    flex-direction: column;
+
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+
+    z-index: 2500;
+}
+
+/* Panel Visible */
+#chatbot-panel.show {
+    transform: translateX(0);
+}
+
+/*******************************************
+    CHAT HEADER
+********************************************/
+.chat-header {
+    padding: 1.2rem 1.6rem;
+    border-bottom: 1px solid var(--border-color);
+
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-color);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Close Button */
+#chatbot-close-btn {
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 0.5rem;
+    transition: background 0.25s ease;
+}
+
+#chatbot-close-btn:hover {
+    background: rgba(0,0,0,0.08);
+}
+
+/*******************************************
+    CHAT BODY (Scrollable area)
+********************************************/
+#chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Scrollbar */
+#chat-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat-body::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+/*******************************************
+    CHAT MESSAGE BUBBLES
+********************************************/
+.chat-message {
+    max-width: 85%;
+    padding: 0.9rem;
+    border-radius: 0.9rem;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    color: white;
+}
+
+/* User message */
+.user-message {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    border-bottom-right-radius: 0.2rem;
+}
+
+/* Bot message */
+.bot-message {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #8B5CF6, #3B82F6);
+    border-bottom-left-radius: 0.2rem;
+}
+
+/* Mobile bubble sizing */
+@media (max-width: 768px) {
+    .chat-message {
+        max-width: 90%;
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+}
+
+/*******************************************
+    CHAT INPUT AREA
+********************************************/
+.chat-input-container {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    background: var(--card-bg);
+}
+
+/* Textarea */
+#chat-input {
+    flex: 1;
+    min-height: 42px;
+    max-height: 120px;
+
+    resize: none;
+
+    background: var(--bg-color);
+    color: var(--text-color);
+
+    border: 1px solid var(--border-color);
+    border-radius: 0.7rem;
+
+    padding: 0.7rem;
+    font-size: 0.92rem;
+
+    overflow-y: auto;
+}
+
+/* Send Button */
+#chat-send-btn {
+    padding: 0.55rem 1rem;
+    border-radius: 0.7rem;
+    background: var(--primary-accent);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: background 0.25s ease, transform 0.15s ease;
+}
+
+#chat-send-btn:hover {
+    background: var(--secondary-accent);
+    transform: scale(1.03);
+}
+
+#chat-send-btn:active {
+    transform: scale(0.96);
+}
+
+/*******************************************
+    SMALL MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    #chatbot-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .chat-header {
+        padding: 1rem 1.2rem;
+    }
+
+    #chat-body {
+        padding: 0.8rem 1rem;
+    }
+
+    .chat-input-container {
+        padding: 0.7rem;
+    }
+
+    #chat-input {
+        font-size: 0.9rem;
+    }
+
+    #chat-send-btn {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.9rem;
+    }
+}
+
+/*******************************************
+    EXTRA SMALL DEVICES
+********************************************/
+@media (max-width: 400px) {
+    #chatbot-panel {
+        padding: 0;
+    }
+
+    .chat-header {
+        font-size: 1rem;
+    }
+
+    .chat-message {
+        font-size: 0.88rem;
+    }
+}
+/* PART 22 — API Status Warning Banner Responsive Improvements */
+
+/*******************************************
+    API NOTICE WRAPPER
+********************************************/
+#api-status-notice {
+    display: none;
+    background: rgba(231, 76, 60, 0.15);
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+
+    padding: 0.9rem 1.2rem;
+    border-radius: 0.75rem;
+
+    margin-top: 1.2rem;
+    margin-bottom: 1rem;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+
+    animation: fadeIn 0.3s ease-out;
+}
+
+/*******************************************
+    WARNING TEXT WRAP FIX
+********************************************/
+#api-status-text {
+    flex: 1;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/*******************************************
+    CLOSE BUTTON
+********************************************/
+#api-status-close {
+    cursor: pointer;
+    font-size: 1.15rem;
+
+    padding: 0.2rem 0.45rem;
+    border-radius: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+#api-status-close:hover {
+    background: rgba(231, 76, 60, 0.18);
+}
+
+/*******************************************
+    MOBILE RESPONSIVENESS
+********************************************/
+@media (max-width: 768px) {
+    #api-status-notice {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    #api-status-close {
+        align-self: flex-end;
+        font-size: 1.1rem;
+        padding: 0.15rem 0.35rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 420px) {
+    #api-status-notice {
+        font-size: 0.88rem;
+        padding: 0.75rem 0.9rem;
+        border-radius: 0.6rem;
+    }
+}
+/* PART 23 — GLOBAL MOBILE OPTIMIZATION */
+
+/*******************************************
+    IMPROVE DEFAULT TEXT SCALING
+********************************************/
+html {
+    -webkit-text-size-adjust: 100%; /* Prevents zoomed text on iPhones */
+    touch-action: manipulation;     /* Reduces click delay on mobile */
+}
+
+/*******************************************
+    PREVENT HORIZONTAL OVERFLOW (Global)
+********************************************/
+body, html {
+    max-width: 100%;
+    overflow-x: hidden; /* Fixes sideways scroll on small devices */
+}
+
+/*******************************************
+    UNIVERSAL RESPONSIVE SPACING
+********************************************/
+@media (max-width: 768px) {
+    body {
+        padding: 0.75rem;
+    }
+
+    p, label, span {
+        font-size: 0.95rem;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1.25;
+    }
+
+    h2 {
+        font-size: 1.45rem;
+        line-height: 1.25;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+        line-height: 1.25;
+    }
+
+    button, input, textarea {
+        font-size: 1rem;
+    }
+}
+
+/*******************************************
+    TABLET OPTIMIZATION
+********************************************/
+@media (min-width: 769px) and (max-width: 1024px) {
+    body {
+        padding: 1.3rem;
+    }
+
+    .main-container {
+        padding: 2.25rem;
+        max-width: 80%;
+        margin: auto;
+    }
+}
+
+/*******************************************
+    FIX FOR LARGE CONTENT SCROLLING
+********************************************/
+* {
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+}
+
+/*******************************************
+    REMOVE LONG PRESS HIGHLIGHT ON MOBILE
+********************************************/
+button, a, input, textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/*******************************************
+    PREVENT DOUBLE-TAP ZOOM ON BUTTONS
+********************************************/
+button {
+    touch-action: manipulation;
+}
+/* PART 24 — Responsive Loading Screen + Hand Animation */
+
+/*******************************************
+    LOADING OVERLAY (GLOBAL FIX)
+********************************************/
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+
+    z-index: 3000;
+}
+
+body.dark-mode #loading-overlay {
+    background: rgba(44, 62, 80, 0.9);
+}
+
+/*******************************************
+    HAND ANIMATION CONTAINER
+********************************************/
+#hand-loading {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 1rem;
+    text-align: center;
+
+    animation: fadeIn 0.45s ease-out;
+}
+
+/* Toggle visibility */
+#hand-loading.show {
+    display: flex;
+}
+
+/*******************************************
+    HAND ICON SIZING
+********************************************/
+#hand-icon {
+    font-size: 3.8rem; 
+    animation: pulse 1.3s infinite ease-in-out;
+    opacity: 0.85;
+}
+
+/* Loading Text */
+#hand-loading-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/*******************************************
+    SKELETON LOADER IMPROVEMENTS
+********************************************/
+#loading-skeletons {
+    width: 100%;
+    max-width: 650px;
+
+    padding: 1.5rem;
+    margin: auto;
+
+    display: none;
+}
+
+#loading-skeletons.show {
+    display: block;
+}
+
+/*******************************************
+    MOBILE RESPONSIVENESS
+********************************************/
+@media (max-width: 768px) {
+    #hand-icon {
+        font-size: 3rem;
+    }
+
+    #hand-loading-text {
+        font-size: 0.95rem;
+    }
+
+    #loading-skeletons {
+        padding: 1.2rem;
+    }
+}
+
+/*******************************************
+    SMALL DEVICES (Phones < 480px)
+********************************************/
+@media (max-width: 480px) {
+    #hand-icon {
+        font-size: 2.5rem;
+    }
+
+    #hand-loading-text {
+        font-size: 0.9rem;
+        max-width: 80%;
+    }
+
+    #loading-skeletons {
+        padding: 1rem;
+    }
+}
+
+/*******************************************
+    KEYFRAME ANIMATIONS
+********************************************/
+@keyframes pulse {
+    0%   { transform: scale(1);   opacity: 0.8; }
+    50%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1);   opacity: 0.8; }
+}
+/* PART 25 — File Preview Responsive Improvements */
+
+/*******************************************
+    FILE PREVIEW CONTAINER
+********************************************/
+.file-preview {
+    display: none;
+    align-items: center;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 0.7rem;
+    padding: 1rem;
+    margin-top: 1rem;
+
+    gap: 1rem;
+
+    overflow: hidden; /* Prevents overflow on long file names */
+}
+
+/*******************************************
+    ICON
+********************************************/
+.file-icon {
+    font-size: 2rem;
+    color: var(--primary-accent);
+    flex-shrink: 0;
+}
+
+/*******************************************
+    FILE INFO TEXT
+********************************************/
+.file-info {
+    flex: 1;
+    min-width: 0; /* Required for text ellipsis */
+}
+
+.file-info h4 {
+    font-weight: 600;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; /* Show ... for long file names */
+}
+
+.file-info p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/*******************************************
+    REMOVE BUTTON
+********************************************/
+.remove-file {
+    flex-shrink: 0;
+    padding: 0.45rem;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.remove-file:hover {
+    background: rgba(231, 76, 60, 0.2);
+    transform: scale(1.1);
+}
+
+/*******************************************
+    MOBILE RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .file-preview {
+        padding: 0.8rem;
+        gap: 0.75rem;
+    }
+
+    .file-icon {
+        font-size: 1.7rem;
+    }
+
+    .file-info h4 {
+        font-size: 0.95rem;
+    }
+
+    .file-info p {
+        font-size: 0.8rem;
+    }
+
+    .remove-file {
+        padding: 0.35rem;
+    }
+}
+
+/*******************************************
+    SMALL SCREENS (< 480px)
+********************************************/
+@media (max-width: 480px) {
+    .file-preview {
+        padding: 0.75rem;
+        gap: 0.6rem;
+    }
+
+    .file-icon {
+        font-size: 1.5rem;
+    }
+
+    .file-info h4 {
+        font-size: 0.9rem;
+    }
+
+    .remove-file {
+        padding: 0.3rem;
+    }
+}
+/* PART 26 — Responsive Upload Zone Improvements */
+
+/*******************************************
+    UPLOAD ZONE BOX
+********************************************/
+.upload-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: var(--bg-color);
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.75rem;
+}
+
+/*******************************************
+    HOVER / DRAG EFFECTS
+********************************************/
+.upload-zone:hover {
+    border-color: var(--primary-accent);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.upload-zone.dragover {
+    border-color: var(--primary-accent);
+    background: rgba(52, 152, 219, 0.1);
+    transform: scale(1.02);
+}
+
+/*******************************************
+    UPLOAD ICON
+********************************************/
+.upload-icon {
+    font-size: 3rem;
+    color: var(--text-color);
+    opacity: 0.65;
+    transition: all 0.3s ease;
+}
+
+.upload-zone.dragover .upload-icon {
+    transform: scale(1.1);
+    color: var(--primary-accent);
+}
+
+/*******************************************
+    TEXT
+********************************************/
+.upload-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.upload-subtext {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: var(--text-color);
+}
+
+/*******************************************
+    MOBILE RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+
+    .upload-zone {
+        padding: 1.4rem;
+        gap: 0.6rem;
+    }
+
+    .upload-icon {
+        font-size: 2.4rem;
+    }
+
+    .upload-text {
+        font-size: 1rem;
+    }
+
+    .upload-subtext {
+        font-size: 0.82rem;
+    }
+}
+
+/*******************************************
+    VERY SMALL SCREENS (<480px)
+********************************************/
+@media (max-width: 480px) {
+
+    .upload-zone {
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+        gap: 0.55rem;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+    }
+
+    .upload-text {
+        font-size: 0.95rem;
+    }
+
+    .upload-subtext {
+        font-size: 0.78rem;
+        line-height: 1.3;
+    }
+}
+/* PART 27 — Textarea Responsive & Mobile Optimization */
+
+/*******************************************
+    BASE TEXTAREA STYLES
+********************************************/
+textarea {
+    width: 100%;
+    border-radius: 1rem;
+    padding: 1rem;
+
+    background-color: var(--bg-color);
+    border: 2px solid var(--border-color);
+
+    transition: all 0.3s ease-in-out;
+    resize: none; /* Prevent dragging corner on desktop */
+    overflow-y: auto;
+    min-height: 130px;
+    max-height: 300px;
+
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+/*******************************************
+    FOCUS EFFECT
+********************************************/
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3);
+}
+
+/*******************************************
+    MOBILE OPTIMIZATION
+********************************************/
+@media (max-width: 768px) {
+
+    textarea {
+        min-height: 110px;
+        max-height: 260px;
+
+        padding: 0.85rem;
+        font-size: 0.95rem;
+        line-height: 1.45;
+    }
+}
+
+/*******************************************
+    SMALL SCREENS (<480px)
+********************************************/
+@media (max-width: 480px) {
+
+    textarea {
+        min-height: 100px;
+        max-height: 240px;
+
+        padding: 0.75rem;
+        font-size: 0.92rem;
+        line-height: 1.4;
+    }
+}
+
+/*******************************************
+    FIX FOR MOBILE KEYBOARD ISSUE
+********************************************/
+@supports (-webkit-touch-callout: none) {
+    textarea {
+        font-size: 16px; /* Prevent zooming on iPhone focus */
+    }
+}
+/* PART 28 — Responsive Button Improvements */
+
+/*******************************************
+    MAIN SUBMIT / ANALYZE BUTTON
+********************************************/
+.submit-button {
+    padding: 1.25rem 2rem;
+    font-size: 1.05rem;
+    border-radius: 1rem;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .submit-button {
+        width: 100%;
+        padding: 1.1rem 1.4rem;
+        font-size: 1rem;
+        border-radius: 0.9rem;
+    }
+}
+
+/*******************************************
+    ACTION BUTTONS (Copy Text, View Details etc.)
+********************************************/
+.action-btn,
+.copy-text,
+.view-details-btn {
+    font-size: 0.9rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.55rem;
+}
+
+/* Hover behavior preserved */
+.action-btn:hover,
+.copy-text:hover,
+.view-details-btn:hover {
+    transform: translateY(-1px);
+}
+
+/*******************************************
+    MOBILE OPTIMIZATION FOR ACTION BUTTONS
+********************************************/
+@media (max-width: 768px) {
+    .action-btn,
+    .copy-text,
+    .view-details-btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.85rem;
+        border-radius: 0.5rem;
+    }
+
+    /* Full width buttons when in a row */
+    .result-card .action-btn {
+        width: auto;
+        min-width: 80px;
+    }
+}
+
+/*******************************************
+    MODAL ACTION BUTTONS
+********************************************/
+.modal-btn {
+    padding: 0.75rem 1.4rem;
+    font-size: 0.95rem;
+    border-radius: 0.55rem;
+}
+
+/* Primary modal button */
+.modal-btn.primary {
+    font-weight: 600;
+}
+
+/* Mobile: stack buttons vertically */
+@media (max-width: 768px) {
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .modal-btn {
+        width: 100%;
+        padding: 0.9rem 1.1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/*******************************************
+    FILTER & SORT SELECT (Dropdowns)
+********************************************/
+.control-select {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.9rem;
+    border-radius: 0.55rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .control-select {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/*******************************************
+    FIX FOR SMALL SCREENS (<480px)
+********************************************/
+@media (max-width: 480px) {
+
+    .submit-button {
+        font-size: 0.95rem;
+        padding: 1rem 1.2rem;
+    }
+
+    .modal-btn {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+
+    .action-btn,
+    .copy-text,
+    .view-details-btn {
+        font-size: 0.82rem;
+        padding: 0.45rem 0.75rem;
+    }
+
+    .control-select {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.75rem;
+    }
+}
+
+/*******************************************
+    TOUCH IMPROVEMENTS
+********************************************/
+button,
+.action-btn,
+.modal-btn,
+.copy-text,
+.view-details-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+/* PART 29 — Responsive Rank Badge Improvements */
+
+/*******************************************
+    BASE RANK BADGE
+********************************************/
+.rank-badge {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+
+    text-align: center;
+}
+
+/*******************************************
+    MOBILE OPTIMIZATION
+********************************************/
+@media (max-width: 768px) {
+
+    .rank-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+    }
+}
+
+/*******************************************
+    SMALL DEVICES (<480px)
+********************************************/
+@media (max-width: 480px) {
+
+    .rank-badge {
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
+
+        /* Extra fix: prevent circle distortion */
+        line-height: 26px;
+    }
+}
+
+/*******************************************
+    PREVENT LAYOUT BREAKING
+********************************************/
+.result-card .rank-badge {
+    flex-shrink: 0; /* Ensures badge doesn’t get squeezed */
+}
+
+/*******************************************
+    ALIGNMENT FIX ON MOBILES
+********************************************/
+@media (max-width: 480px) {
+    .result-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+/* PART 30 — Responsive Similarity Bar Improvements */
+
+/*******************************************
+    BASE SIMILARITY BAR
+********************************************/
+.similarity-bar {
+    width: 100%;
+    max-width: 140px;
+    height: 8px;
+
+    background-color: rgba(52, 152, 219, 0.25);
+    border-radius: 4px;
+
+    overflow: hidden;
+    position: relative;
+}
+
+/*******************************************
+    FILL BAR (animated via JS)
+********************************************/
+.similarity-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+
+    transition: width 0.8s ease;
+}
+
+/*******************************************
+    SCORE TEXT (XX%)
+********************************************/
+.similarity-score-text {
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+/*******************************************
+    MOBILE: Reduce width to avoid overflow
+********************************************/
+@media (max-width: 768px) {
+    .similarity-bar {
+        max-width: 120px;
+        height: 7px;
+    }
+    .similarity-score-text {
+        font-size: 0.85rem;
+    }
+}
+
+/*******************************************
+    VERY SMALL DEVICES (<480px)
+********************************************/
+@media (max-width: 480px) {
+    .similarity-bar {
+        max-width: 100px;
+        height: 6px;
+    }
+    .similarity-score-text {
+        font-size: 0.8rem;
+    }
+}
+
+/*******************************************
+    ULTRA SMALL (<380px)
+********************************************/
+@media (max-width: 380px) {
+    .similarity-bar {
+        max-width: 85px;
+    }
+}
+/* PART 31 — Improve Result Card Layout for All Screen Sizes */
+
+/*******************************************
+    BASE CARD — keeps your original design
+********************************************/
+.result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    padding: 1.5rem;
+    border-radius: 1rem;
+
+    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--card-bg), rgba(255,255,255,0.95));
+
+    transition: all 0.3s ease;
+}
+
+/*******************************************
+    TITLE + RANK BADGE ALIGNMENT
+********************************************/
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/*******************************************
+    TITLE RESPONSIVE WRAPPING
+********************************************/
+.result-card h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.4;
+
+    /* Prevent title overflow */
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+/*******************************************
+    MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .result-card {
+        padding: 1.25rem;
+        gap: 0.75rem;
+    }
+
+    .result-header {
+        flex-wrap: wrap; /* Title and badge stack if needed */
+        gap: 0.5rem;
+    }
+
+    .result-card h4 {
+        font-size: 1rem;
+    }
+}
+
+/*******************************************
+    VERY SMALL DEVICES (<480px)
+********************************************/
+@media (max-width: 480px) {
+    .result-card {
+        padding: 1rem;
+    }
+
+    .result-card h4 {
+        font-size: 0.95rem;
+    }
+}
+
+/*******************************************
+    ULTRA SMALL DEVICES (<360px)
+********************************************/
+@media (max-width: 360px) {
+    .result-card h4 {
+        font-size: 0.9rem;
+    }
+}
+/* PART 32–34 — Responsive Preview System Improvements */
+
+/*******************************************
+    PREVIEW WRAPPER
+********************************************/
+.preview-section {
+    position: relative;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+/*******************************************
+    PREVIEW TEXT — improved responsiveness
+********************************************/
+.preview-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-color);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* show 3 lines only */
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/*******************************************
+    FADE EFFECT
+********************************************/
+.preview-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 40px;
+    background: linear-gradient(
+        transparent,
+        var(--card-bg)
+    );
+    pointer-events: none;
+}
+
+/*******************************************
+    EXPAND / COLLAPSE BUTTON
+********************************************/
+.expand-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    color: var(--primary-accent);
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.expand-btn:hover {
+    transform: translateY(-2px);
+}
+
+/*******************************************
+    WHEN EXPANDED
+********************************************/
+.preview-section.expanded .preview-text {
+    -webkit-line-clamp: unset;
+    max-height: none;
+    overflow: visible;
+}
+
+.preview-section.expanded .preview-fade {
+    display: none;
+}
+
+/*******************************************
+    MOBILE RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .preview-text {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 4;
+    }
+
+    .preview-fade {
+        height: 32px;
+    }
+
+    .expand-btn {
+        font-size: 0.85rem;
+    }
+}
+
+/*******************************************
+    VERY SMALL DEVICES (<480px)
+********************************************/
+@media (max-width: 480px) {
+    .preview-text {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 5;
+    }
+
+    .expand-btn {
+        font-size: 0.8rem;
+    }
+}
+
+/*******************************************
+    ULTRA SMALL DEVICES (<360px)
+********************************************/
+@media (max-width: 360px) {
+    .preview-text {
+        -webkit-line-clamp: 6;
+    }
+}
+/* PART 35 — Modal Container Responsive Fix */
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/*******************************************
+    RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95%;
+        border-radius: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        max-width: 100%;
+        border-radius: 1rem;
+    }
+}
+/* PART 36 — Modal Header + Close Button Responsive Fix */
+
+.modal-header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    flex-wrap: nowrap;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    flex: 1;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+
+    font-size: 2rem;
+    cursor: pointer;
+
+    color: var(--text-color);
+    opacity: 0.7;
+
+    padding: 0.5rem;
+    border-radius: 50%;
+
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.modal-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/*******************************************
+    MOBILE RESPONSIVE IMPROVEMENTS
+********************************************/
+@media (max-width: 768px) {
+    .modal-header {
+        padding: 1.5rem 1.5rem 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .modal-title {
+        font-size: 1.3rem;
+    }
+
+    .modal-close {
+        font-size: 1.8rem;
+        padding: 0.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-header {
+        padding: 1.25rem 1.25rem 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.15rem;
+    }
+
+    .modal-close {
+        font-size: 1.6rem;
+        padding: 0.35rem;
+    }
+}
+/* PART 37 — Modal Body Responsive Fix */
+
+.modal-body {
+    padding: 1.5rem 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+
+    line-height: 1.7;
+    color: var(--text-color);
+
+    /* Prevent text from touching sides */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/*******************************************
+    MOBILE RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .modal-body {
+        padding: 1.25rem 1.5rem;
+        max-height: 65vh; /* more height for small devices */
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-body {
+        padding: 1rem 1rem;
+        max-height: 70vh;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+}
+/* PART 38 — Modal Meta Data Grid Responsiveness */
+
+.case-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 0.75rem;
+}
+
+.meta-item {
+    text-align: center;
+}
+
+.meta-label {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.meta-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/*******************************************
+    RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .case-meta {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        padding: 0.75rem;
+    }
+
+    .meta-value {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .case-meta {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .meta-value {
+        font-size: 0.95rem;
+    }
+}
+/* PART 39 — Modal Action Buttons (Copy / Close) */
+
+.modal-actions {
+    padding: 1rem 2rem 2rem;
+    border-top: 1px solid var(--border-color);
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.modal-btn {
+    padding: 0.75rem 1.5rem;
+
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+
+    border-radius: 0.5rem;
+    cursor: pointer;
+
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+
+    transition: 0.2s ease;
+}
+
+.modal-btn.primary {
+    background: var(--primary-accent);
+    border-color: var(--primary-accent);
+    color: white;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/*******************************************
+    MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .modal-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .modal-btn {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-actions {
+        padding: 0.75rem 1rem 1.5rem;
+    }
+
+    .modal-btn {
+        font-size: 0.85rem;
+        padding: 0.65rem 0.75rem;
+    }
+}
+/* PART 40 — Results Controls (Filter + Sort Options) */
+
+.results-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    margin-bottom: 1.5rem;
+
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+
+    padding: 1rem;
+    border-radius: 0.75rem;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.control-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.control-select {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+
+    font-size: 0.9rem;
+    color: var(--text-color);
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.control-select:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+}
+
+/*******************************************
+    MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .results-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .control-group {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .control-select {
+        width: 50%;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-select {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 0.45rem 0.75rem;
+    }
+
+    .control-label {
+        font-size: 0.8rem;
+    }
+}
+/* PART 41 — Select Dropdown Responsiveness */
+
+.control-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+
+    background: var(--card-bg);
+    color: var(--text-color);
+
+    font-size: 0.9rem;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.control-select:hover {
+    border-color: var(--primary-accent);
+}
+
+.control-select:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+}
+
+/*******************************************
+    MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .control-select {
+        width: 50%;
+        font-size: 0.85rem;
+        padding: 0.45rem 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-select {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.65rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .control-select {
+        font-size: 0.75rem;
+    }
+}
+/* PART 42 — No Results Message (Responsive Fix) */
+
+.no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+
+    color: var(--text-color);
+    opacity: 0.6;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.no-results-icon {
+    font-size: 3rem;
+}
+
+/*******************************************
+    MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .no-results {
+        padding: 2.5rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .no-results-icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .no-results {
+        padding: 2rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .no-results-icon {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .no-results {
+        font-size: 0.85rem;
+    }
+}
+/* PART 43 — File Upload Zone Responsive Fix */
+
+.upload-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 1rem;
+
+    padding: 2rem;
+    text-align: center;
+
+    cursor: pointer;
+    background: var(--bg-color);
+
+    position: relative;
+    overflow: hidden;
+
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    border-color: var(--primary-accent);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    opacity: 0.6;
+    margin-bottom: 1rem;
+}
+
+.upload-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.upload-subtext {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/*******************************************
+    MOBILE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .upload-zone {
+        padding: 1.75rem;
+    }
+
+    .upload-icon {
+        font-size: 2.5rem;
+    }
+
+    .upload-text {
+        font-size: 1rem;
+    }
+
+    .upload-subtext {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .upload-zone {
+        padding: 1.5rem;
+    }
+
+    .upload-icon {
+        font-size: 2.2rem;
+    }
+
+    .upload-text {
+        font-size: 0.95rem;
+    }
+
+    .upload-subtext {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .upload-zone {
+        padding: 1.25rem;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+    }
+
+    .upload-text {
+        font-size: 0.9rem;
+    }
+}
+/* PART 44 — File Preview Section Responsive Fix */
+
+.file-preview {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1rem;
+    background: rgba(52,152,219,0.1);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.file-preview.show {
+    display: flex;
+}
+
+.file-icon {
+    font-size: 2rem;
+    color: var(--primary-accent);
+}
+
+.file-info h4 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.file-info p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.remove-file {
+    margin-left: auto;
+    padding: 0.5rem;
+
+    border-radius: 50%;
+    background: rgba(231,76,60,0.1);
+    color: #e74c3c;
+
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.remove-file:hover {
+    background: rgba(231,76,60,0.2);
+    transform: scale(1.1);
+}
+
+/*******************************************
+    RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .file-preview {
+        flex-wrap: wrap;
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .file-icon {
+        font-size: 1.8rem;
+    }
+
+    .file-info h4 {
+        font-size: 1rem;
+    }
+
+    .file-info p {
+        font-size: 0.85rem;
+    }
+
+    .remove-file {
+        padding: 0.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .file-preview {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .file-icon {
+        font-size: 1.6rem;
+    }
+
+    .remove-file {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 360px) {
+    .file-info h4 {
+        font-size: 0.95rem;
+    }
+
+    .file-info p {
+        font-size: 0.8rem;
+    }
+}
+/* PART 45 — Loading Overlay & Skeleton Responsive Fix */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(4px);
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+}
+
+body.dark-mode .loading-overlay {
+    background: rgba(44,62,80,0.9);
+}
+
+/* Skeleton Containers */
+.skeleton-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.skeleton-line {
+    height: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.skeleton-line.short { width: 60%; }
+.skeleton-line.medium { width: 80%; }
+.skeleton-line.long { width: 100%; }
+
+.skeleton-bar {
+    height: 8px;
+    width: 120px;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+/*******************************************
+    RESPONSIVE FIXES
+********************************************/
+@media (max-width: 768px) {
+    .skeleton-card {
+        padding: 1.2rem;
+    }
+
+    .skeleton-line {
+        height: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loading-overlay {
+        padding: 1rem;
+    }
+
+    .skeleton-card {
+        padding: 1rem;
+    }
+
+    .skeleton-line {
+        height: 0.85rem;
+    }
+
+    .skeleton-bar {
+        width: 100px;
+    }
+}
+
+@media (max-width: 360px) {
+    .skeleton-line {
+        height: 0.75rem;
+    }
+
+    .skeleton-bar {
+        width: 90px;
+    }
+}

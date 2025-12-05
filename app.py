@@ -1,0 +1,560 @@
+# app.py
+from flask import Flask, render_template, request, jsonify, make_response
+import io
+import os
+import gc
+import gdown
+import joblib
+import pdfplumber
+import numpy as np
+from sentence_transformers import util
+import PyPDF2
+from werkzeug.exceptions import RequestEntityTooLarge
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# -------- CONFIG ----------
+app = Flask(__name__)
+# set max upload size (bytes) — here 10 MB (adjust as needed)
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+
+# -------- Helpers ----------
+def download_and_load(file_id, local_path):
+    """Download from Google Drive (if not exists) and load pickle file."""
+    url = f"https://drive.google.com/uc?id={file_id}"
+    if not os.path.exists(local_path):
+        gdown.download(url, local_path, quiet=False)
+    return joblib.load(local_path)
+
+def read_pdf_from_bytes(file_bytes):
+    """
+    Extract text from PDF bytes without saving to disk.
+    Tries pdfplumber first, falls back to PyPDF2 if needed.
+    """
+    text_pages = []
+    try:
+        with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
+            for page in pdf.pages:
+                txt = page.extract_text()
+                if txt:
+                    text_pages.append(txt)
+        if text_pages:
+            return "\n".join(text_pages)
+    except Exception:
+        pass
+
+    # fallback to PyPDF2
+    try:
+        reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
+        for page in reader.pages:
+            txt = page.extract_text()
+            if txt:
+                text_pages.append(txt)
+        return "\n".join(text_pages)
+    except Exception as e:
+        return f"[ERROR] Could not extract PDF text: {e}"
+
+# -------- Global variables for lazy loading ----------
+_models_loaded = False
+_judgment_texts = None
+_model = None
+_case_names = None
+_embeddings = None
+_modellog = None
+
+def load_models():
+    """Load ML models only when needed (lazy loading)"""
+    global _models_loaded, _judgment_texts, _model, _case_names, _embeddings, _modellog
+
+    if _models_loaded:
+        return
+
+    try:
+        print("[INFO] Loading ML models...")
+        _judgment_texts = download_and_load("1vAA2spJ-AzHhBqs-gl6gL5_wDk22a5VW", "judgment_texts.pkl")
+        _model = download_and_load("1-pje6HUuprf19yGIbJQA7MNwPNGqTkF0", "model.pkl")
+        _case_names = download_and_load("1_IZQmTuucallXvQaeLM8P9q0co79_JD6", "case_names.pkl")
+        _embeddings = download_and_load("1molCaZLasdsSMqqskRIcHnmnpQWfAupF", "embeddings.pkl")
+        _modellog = download_and_load("1XALJYnXhZB9gXdjAgz8y_I852CpYt-eg", "modellog.pkl")
+        _models_loaded = True
+        print("[INFO] All ML models loaded successfully")
+    except Exception as e:
+        print(f"[ERROR] Failed to load ML models: {str(e)}")
+        raise e
+
+def get_judgment_texts():
+    if not _models_loaded:
+        load_models()
+    return _judgment_texts
+
+def get_model():
+    if not _models_loaded:
+        load_models()
+    return _model
+
+def get_case_names():
+    if not _models_loaded:
+        load_models()
+    return _case_names
+
+def get_embeddings():
+    if not _models_loaded:
+        load_models()
+    return _embeddings
+
+def get_modellog():
+    if not _models_loaded:
+        load_models()
+    return _modellog
+
+# -------- Initialize Gemini AI (lazy loading) ----------
+_gemini_initialized = False
+_gemini_model = None
+_gemini_model_name = None
+
+def initialize_gemini():
+    """Initialize Gemini AI by finding a suitable model."""
+    global _gemini_initialized, _gemini_model, _gemini_model_name
+
+    if _gemini_initialized:
+        return _gemini_model is not None
+
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+    if not GEMINI_API_KEY:
+        print("[WARNING] GEMINI_API_KEY not found in environment variables")
+        _gemini_initialized = True
+        return False
+
+    try:
+        genai.configure(api_key=GEMINI_API_KEY)
+    except Exception as e:
+        print(f"[ERROR] genai.configure failed: {e}")
+        _gemini_initialized = True
+        return False
+
+    chosen_model = None
+    try:
+        # List all available models and find one that supports 'generateContent'
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                chosen_model = m.name
+                break
+    except Exception as e:
+        print(f"[WARNING] list_models() failed: {e}")
+        # Fallback to a common model name if listing fails
+        chosen_model = "gemini-1.5-pro"
+
+    if not chosen_model:
+        print("[WARNING] No compatible Gemini model found for generation. AI features will be disabled.")
+        _gemini_initialized = True
+        _gemini_model = None
+        _gemini_model_name = None
+        return False
+
+    try:
+        _gemini_model = genai.GenerativeModel(chosen_model)
+        _gemini_model_name = chosen_model
+        print(f"[INFO] Gemini model initialized: {_gemini_model_name}")
+        _gemini_initialized = True
+        return True
+    except Exception as e:
+        print(f"[ERROR] Failed to create GenerativeModel({chosen_model}): {e}")
+        _gemini_initialized = True
+        _gemini_model = None
+        _gemini_model_name = None
+        return False
+
+def get_gemini_model():
+    """Get Gemini model, initializing if needed"""
+    if not _gemini_initialized:
+        initialize_gemini()
+    return _gemini_model
+
+def get_legal_explanation(question, context_chunks, max_retries=3):
+    """
+    Get legal explanation from Gemini AI using retrieved context.
+    """
+    gemini_model = get_gemini_model()
+    if not gemini_model:
+        return {
+            "error": "❌ AI service temporarily unavailable due to quota limits or model not available. Please check API key, project access, and model availability.",
+            "answer": None,
+            "sources": []
+        }
+
+    # Check if we have context, if not provide a helpful response
+    if not context_chunks or len(context_chunks) == 0:
+        return {
+            "error": None,
+            "answer": "I can help explain legal concepts in simple terms, but I need some context from legal cases to provide accurate information. Please use the main search form first to find relevant cases, then ask me specific questions about them.",
+            "sources": []
+        }
+
+    # Build context from chunks
+    context = "\n\n".join([
+        f"[Source: {chunk.get('case', 'Unknown Case')}] {chunk.get('full_text', chunk.get('preview', ''))[:1000]}"
+        for chunk in context_chunks
+    ])
+
+    # Detect question type for appropriate prompt
+    question_lower = question.lower()
+
+    # Check if user wants structured summary
+    wants_structured = any(keyword in question_lower for keyword in [
+        'structured summary', 'summary with sections', 'give a structured summary',
+        'case background', 'high court', 'supreme court', 'why it matters'
+    ])
+
+    # Check if user wants layman's explanation
+    wants_layman = any(keyword in question_lower for keyword in [
+        'explain in simple terms', 'layman', 'non-law student', 'simple words',
+        'easy explanation', 'plain english', 'everyday language'
+    ])
+
+    # Choose appropriate prompt based on question type
+    if wants_structured:
+        system_prompt = """You are a senior legal professional and expert in Indian law.
+        Your task is to provide a structured summary of this PDF judgment that DIRECTLY ANSWERS the user's specific question.
+
+        CRITICAL: Focus on answering what the user specifically asked about, not giving a generic summary.
+
+        STRUCTURE YOUR RESPONSE BASED ON THE USER'S QUESTION:
+        Case background (only if relevant to their question)
+        Issue (main legal question they asked about)
+        High Court's decision (only if they asked about it)
+        Supreme Court's decision (only if they asked about it)
+        Why it matters (impact) (only if they asked about it)
+
+        IMPORTANT RULES:
+        1. Use only the provided context - do not add external knowledge
+        2. If details are missing, say: "I couldn't find that information in the provided documents."
+        3. Cite sources using [Case Name] format
+        4. Simplify legal terms into everyday language
+        5. Keep it professional, accurate, and complete
+        6. Structure with bullet points and short paragraphs
+        7. Answer ONLY what they specifically asked about
+
+        CONTEXT:
+        {context}
+
+        USER'S SPECIFIC QUESTION: {question}
+        """
+    elif wants_layman:
+        system_prompt = """You are a senior legal professional and expert in Indian law.
+        Your task is to explain this PDF judgment in simple terms, as if explaining to a non-law student.
+
+        CRITICAL: Focus on answering what the user specifically asked about, not giving a generic summary.
+
+        CONTEXT:
+        {context}
+
+        USER'S SPECIFIC QUESTION: {question}
+        """
+    else:
+        system_prompt = """You are a senior legal professional and expert in Indian law.
+        Your task is to ANSWER THE USER'S SPECIFIC QUESTION about the provided legal document in very simple, everyday words.
+
+        IMPORTANT RULES:
+        1. Use only the provided context - do not add external knowledge
+        2. If the answer is not in the context, say "I couldn't find that information in the provided documents."
+        3. Always cite your sources using [Case Name] format
+
+        CONTEXT:
+        {context}
+
+        USER'S SPECIFIC QUESTION: {question}
+        """
+
+    prompt = system_prompt.format(context=context, question=question)
+
+    for attempt in range(max_retries):
+        try:
+            # Use the selected model object to generate content
+            response = gemini_model.generate_content(prompt)
+
+            if response and getattr(response, "text", None):
+                # Extract sources from context
+                sources = [chunk.get('case', 'Unknown Case') for chunk in context_chunks if chunk.get('case')]
+                return {
+                    "answer": response.text.strip(),
+                    "sources": sources,
+                    "error": None
+                }
+            else:
+                return {
+                    "error": "No response generated from AI model",
+                    "answer": None,
+                    "sources": []
+                }
+
+        except Exception as e:
+            error_str = str(e)
+            if attempt == max_retries - 1:
+                if "quota" in error_str.lower() or "429" in error_str:
+                    return {
+                        "error": "❌ QUOTA EXCEEDED: Your Gemini API free tier limit has been reached. Please upgrade to a paid plan or check quotas.",
+                        "answer": None,
+                        "sources": []
+                    }
+                elif "api_key" in error_str.lower() or "permission" in error_str.lower():
+                    return {
+                        "error": "❌ API KEY ISSUE: Please check your Gemini API key in the .env file and project permissions.",
+                        "answer": None,
+                        "sources": []
+                    }
+                else:
+                    return {
+                        "error": f"❌ AI service error after {max_retries} attempts: {error_str}",
+                        "answer": None,
+                        "sources": []
+                    }
+            continue
+
+    return {
+        "error": "Failed to get response from AI service",
+        "answer": None,
+        "sources": []
+    }
+
+# -------- Routes ----------
+@app.route("/health", methods=["GET"])
+def health():
+    """Health check endpoint that doesn't require ML models"""
+    return jsonify({
+        "status": "healthy",
+        "models_loaded": _models_loaded,
+        "message": "App is running. ML models load on-demand."
+    })
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    # Prevent caching to ensure fresh page loads
+    if request.method == "GET":
+        response = make_response(render_template("index.html", results=None, category=None, original_document=None))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+
+    # Initialize variables - only set on POST requests
+    results = None
+    predicted_category = None
+    original_document = None
+
+    if request.method == "POST":
+        input_text = request.form.get("text_input", "").strip()
+
+        pdf_bytes = None
+        if not input_text:
+            # check for file in request
+            uploaded = request.files.get("file")
+            if not uploaded or uploaded.filename == "":
+                return "❌ No input provided (paste text or upload a PDF).", 400
+
+            # optional: strictly allow only .pdf extension
+            if not uploaded.filename.lower().endswith(".pdf"):
+                return "❌ Only PDF files are allowed.", 400
+
+            # read file into memory (no saving)
+            pdf_bytes = uploaded.read()
+            if not pdf_bytes:
+                return "❌ Uploaded file is empty.", 400
+
+            # extract text from bytes
+            input_text = read_pdf_from_bytes(pdf_bytes)
+
+            # Check if PDF extraction failed
+            if input_text.startswith("[ERROR]"):
+                return f"❌ PDF processing failed: {input_text}", 400
+
+        # Validate that we have input text
+        if not input_text:
+            return "❌ No text could be extracted from the input.", 400
+
+        # Check minimum word count
+        word_count = len(input_text.strip().split())
+        if word_count < 5:
+            return f"❌ Input text is too short. Please provide at least 5 words for meaningful analysis. Current: {word_count} words.", 400
+
+        # get text after "JUDGMENT" if present
+        start_index = input_text.find("JUDGMENT")
+        text = input_text[start_index:] if start_index != -1 else input_text
+
+        # Load models only when needed
+        try:
+            modellog = get_modellog()
+            model = get_model()
+            case_names = get_case_names()
+            embeddings = get_embeddings()
+            judgment_texts = get_judgment_texts()
+
+            predicted_category = modellog.predict([text])[0]
+        except Exception as e:
+            return f"❌ Error in category prediction: {str(e)}", 500
+
+        # semantic search - top 5
+        try:
+            query_embedding = model.encode(text, convert_to_tensor=True)
+            cos_scores = util.cos_sim(query_embedding, embeddings)[0]
+            top_results = np.argsort(-cos_scores)[:5]
+        except Exception as e:
+            return f"❌ Error in semantic search: {str(e)}", 500
+
+        results = []
+        for idx in top_results:
+            results.append({
+                "case": case_names[idx],
+                "score": float(cos_scores[idx]),
+                "rank": len(results) + 1,
+                "preview": judgment_texts[idx][:500],
+                "full_text": judgment_texts[idx]
+            })
+
+        # Store the original document content for chatbot use BEFORE cleanup
+        original_document = text if 'text' in locals() else (input_text if 'input_text' in locals() else None)
+
+        # ********** PRIVACY: clean up large objects ASAP **********
+        try:
+            # remove sensitive text / bytes references
+            del input_text
+            del text
+            # Clean up PDF bytes if they exist
+            if 'pdf_bytes' in globals() or 'pdf_bytes' in locals():
+                if 'pdf_bytes' in locals():
+                    del pdf_bytes
+                elif 'pdf_bytes' in globals():
+                    del globals()['pdf_bytes']
+            gc.collect()
+        except Exception:
+            pass
+
+    # Handle GET requests (page reloads) - return clean page
+    if request.method == "GET":
+        print(f"DEBUG: GET request - returning clean page")
+        response = make_response(render_template("index.html", results=None, category=None, original_document=None))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        response.headers['X-Accel-Expires'] = '0'
+        return response
+
+    # Handle POST requests (form submissions) - return with results
+    print(f"DEBUG: POST request - results: {results is not None}, category: {predicted_category}, original_doc: {original_document is not None}")
+    return render_template("index.html", results=results, category=predicted_category, original_document=original_document)
+
+# -------- Test API Key Route ----------
+@app.route("/test-api", methods=["GET"])
+def test_api():
+    """Test endpoint to check if Gemini API key is working"""
+    gemini_model = get_gemini_model()
+    api_key = os.getenv('GEMINI_API_KEY')
+
+    if not gemini_model:
+        return jsonify({
+            "success": False,
+            "error": "Gemini model not initialized",
+            "api_key_set": api_key is not None,
+            "api_key_preview": api_key[:10] + "..." if api_key else None
+        })
+
+    try:
+        # Test with a simple request using the same model
+        response = gemini_model.generate_content("Hello, can you respond with 'API test successful'?")
+        if response and getattr(response, "text", None):
+            return jsonify({
+                "success": True,
+                "message": "API test successful",
+                "response": response.text.strip()
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "error": "No response from API"
+            })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
+
+# -------- Chatbot Route ----------
+@app.route("/chat", methods=["POST"])
+def chat():
+    """
+    Handle chatbot questions about legal cases.
+    Expects JSON: {"question": "user question", "context": [list of case chunks]}
+    """
+    try:
+        data = request.get_json()
+
+        if not data or 'question' not in data:
+            return jsonify({"success": False, "error": "Missing 'question' in request data"}), 400
+
+        question = data['question'].strip()
+        if not question:
+            return jsonify({"success": False, "error": "Question cannot be empty"}), 400
+
+        # Get context from request (should be the same chunks from the main search)
+        context_chunks = data.get('context', [])
+
+        print(f"DEBUG: Received {len(context_chunks)} context chunks")
+        print(f"DEBUG: Context chunks: {context_chunks}")
+
+        if not context_chunks:
+            # Handle general legal questions without specific context
+            print(f"DEBUG: No context chunks, question: '{question}'")  # Debug log
+            if question.lower().strip() in ['hi', 'hello', 'hey', 'help', 'what can you do']:
+                response_data = {
+                    "success": True,
+                    "response": "Hello! I'm your legal assistant. I can help explain your uploaded legal documents in simple, everyday language with clear, structured responses using emojis and sections. Please upload a document first using the main form, then ask me specific questions about it. For example: 'What does this mean?', 'Explain this in simple words', 'Give me a structured summary', or 'Explain this like I'm not a law student.'"
+                }
+                print(f"DEBUG: Returning greeting response: {response_data}")  # Debug log
+                return jsonify(response_data)
+            else:
+                response_data = {
+                    "success": True,
+                    "response": "I can help explain legal concepts in simple terms with clear, structured responses using emojis and sections, but I need some context from your uploaded document to provide accurate information. Please upload a document first using the main form, then ask me specific questions about it. Try: 'Give me a structured summary' or 'Explain this in simple terms like I'm not a law student.'"
+                }
+                print(f"DEBUG: Returning general response: {response_data}")  # Debug log
+                return jsonify(response_data)
+
+        # Get legal explanation from Gemini
+        result = get_legal_explanation(question, context_chunks)
+
+        if result['error']:
+            return jsonify({"success": False, "error": result['error']}), 500
+
+        return jsonify({
+            "success": True,
+            "response": result['answer'],
+            "sources": result.get('sources', [])
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Chatbot error: {str(e)}"}), 500
+
+# handle oversized uploads
+@app.errorhandler(RequestEntityTooLarge)
+def handle_over_max(e):
+    return "Uploaded file is too large. Max size allowed is 10 MB.", 413
+
+# -------- Run ----------
+if __name__ == "__main__":
+    # Development mode with live reloading
+    port = int(os.environ.get("PORT", 7860))  # HF Spaces uses PORT env variable
+
+    # Check if we're in development (not on HF Spaces)
+    is_development = os.environ.get("PORT") is None
+
+    if is_development:
+        # Development: Enable debug mode and live reloading
+        print("[INFO] Starting in DEVELOPMENT mode with live reloading...")
+        print("[INFO] Edit templates, static files, or Python code - changes will auto-reload!")
+        app.run(host="0.0.0.0", port=port, debug=True, use_reloader=True)
+    else:
+        # Production: HF Spaces mode
+        print("[INFO] Starting in PRODUCTION mode...")
+        app.run(host="0.0.0.0", port=port)
