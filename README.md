@@ -15,7 +15,7 @@ A Flask-based web application for searching and analyzing Indian legal cases usi
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/hamza-86/LexiMindd---Legal-Case-Search-Application
+   git clone https://github.com/hamza-86/LexiMindd---Legal-Case-Search-Application.git
    cd leximind
    ```
 
